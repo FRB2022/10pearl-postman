@@ -1,0 +1,251 @@
+{
+	"info": {
+		"_postman_id": "116c7e8a-8dcc-433e-b2ca-7ea6aa83196c",
+		"name": "Assignment 1 - postman",
+		"description": "Postman collection for assignment using simple-books-api.glitch.me with all requirements fulfilled.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "35036315"
+	},
+	"item": [
+		{
+			"name": "GET All Books",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test('Status code is 200', () => pm.response.to.have.status(200));",
+							"let json = pm.response.json();",
+							"console.log('First Book:', json[0].name);",
+							"pm.collectionVariables.set('bookId', json[0].id);"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/books",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"books"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Book by ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test('Book details received', () => pm.response.to.have.status(200));",
+							"let book = pm.response.json();",
+							"console.log('Book ID:', book.id);"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/books/{{bookId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"books",
+						"{{bookId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET API Status",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test('API is up', () => pm.response.to.have.status(200));",
+							"let status = pm.response.json();",
+							"console.log('Status:', status.status);"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/status",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Submit Order",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"let randomName = `User_${Math.floor(Math.random() * 1000)}`;",
+							"pm.variables.set('customerName', randomName);"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test('Order placed successfully', () => {",
+							"    let jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('orderId');",
+							"    pm.collectionVariables.set('orderId', jsonData.orderId);",
+							"});",
+							"pm.test('Deliberate failure test', () => {",
+							"    pm.expect(true).to.eql(false);",
+							"});",
+							"pm.variables.unset('customerName');"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"bookId\": \"{{bookId}}\", \"customerName\": \"{{customerName}}\"}"
+				},
+				"url": {
+					"raw": "{{base_url}}/orders",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PATCH Update Order",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"customerName\": \"Updated Name from PATCH\"}"
+				},
+				"url": {
+					"raw": "{{base_url}}/orders/{{orderId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"orders",
+						"{{orderId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT (Simulated) Update Order",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"customerName\": \"PUT Updated Name\"}"
+				},
+				"url": {
+					"raw": "{{base_url}}/orders/{{orderId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"orders",
+						"{{orderId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE Order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test('Order deleted', () => pm.response.to.have.status(204));"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/orders/{{orderId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"orders",
+						"{{orderId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "https://simple-books-api.glitch.me"
+		},
+		{
+			"key": "bookId",
+			"value": ""
+		}
+	]
+}
